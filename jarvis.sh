@@ -18,6 +18,11 @@ while true; do
   [[ -z ${text// } ]] && continue
   print "Ti: $text"
   print -r -- "- $(date '+%F %H:%M') $text" >> $DIR/narecja-inbox.md
+  # Herdr: a turn that starts with "CEO" or "šef" goes to the CEO pane as a note
+  if [[ ${text:l} =~ '^ *(ceo|šef)[ ,.:]' ]]; then
+    hc send ceo "Vale (glas, Jarvis): $text" >/dev/null 2>&1 && say -v Tina "Poslano šefu." || say -v Tina "CEO ni dosegljiv."
+    continue
+  fi
   # run from an empty dir so Claude talks to Vale, not about the repo
   answer=$(cd $TMP && claude -p --model haiku "Si Jarvis, Valetov pomočnik. Odgovori kratko, po slovensko, največ dva stavka. Vale reče: $text")
   print "Jarvis: $answer"
